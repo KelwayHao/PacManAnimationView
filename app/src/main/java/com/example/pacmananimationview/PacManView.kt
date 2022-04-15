@@ -11,22 +11,33 @@ import android.view.View
 class PacManView(context: Context, attributeSet: AttributeSet) : View(context, attributeSet) {
 
     companion object {
-        private const val CONTOUR_THICKNESS = 4f
+        private const val CONTOUR_THICKNESS = 10f
         private const val COEFFICIENT_MARGIN = 0.8f
+        private const val TIME_TO_OPEN_MOUTH = 1500L
         private const val START_ANGLE = 0f
         private const val END_ANGLE = 180f
-        private const val TIME_TO_OPEN_MOUTH = 1500L
+        private const val CORNER_OPEN_MOUTH = 45f
+        private const val END_ANGLE_EYE = 360f
+        private const val EYE_COEFFICIENT = 0.2f
     }
 
 
     private val paintBodyPacMan = Paint(Paint.ANTI_ALIAS_FLAG)
-        .apply {
-            style = Paint.Style.FILL_AND_STROKE
-            strokeWidth = CONTOUR_THICKNESS
-        }
     var colorPacMan: Int = 0
         set(value) {
             paintBodyPacMan.color = value
+            field = value
+            invalidate()
+        }
+
+    private val paintContourBodyPacMan = Paint(Paint.ANTI_ALIAS_FLAG)
+        .apply {
+            style = Paint.Style.STROKE
+            strokeWidth = CONTOUR_THICKNESS
+        }
+    var colorContourPacMan: Int = 0
+        set(value) {
+            paintContourBodyPacMan.color = value
             field = value
             invalidate()
         }
@@ -46,6 +57,11 @@ class PacManView(context: Context, attributeSet: AttributeSet) : View(context, a
                     getColor(R.styleable.PacManView_pacmanColor, context.getColor(R.color.yellow))
                 colorEye =
                     getColor(R.styleable.PacManView_pacmanEyeColor, context.getColor(R.color.black))
+                colorContourPacMan =
+                    getColor(
+                        R.styleable.PacManView_pacmanContourColor,
+                        context.getColor(R.color.black)
+                    )
             }
     }
 
@@ -68,25 +84,25 @@ class PacManView(context: Context, attributeSet: AttributeSet) : View(context, a
         RectF(
             centerX,
             centerY / 2f + radiusEye,
-            centerX + radiusEye * 2,
+            centerX + radiusEye * 2f,
             centerY / 2f - radiusEye
         )
     }
 
     private val openMouth: ValueAnimator
-        get() = ValueAnimator.ofFloat(mouthSweep, mouthSweep + 45f)
+        get() = ValueAnimator.ofFloat(mouthSweep, mouthSweep + CORNER_OPEN_MOUTH)
             .apply {
                 duration = TIME_TO_OPEN_MOUTH
+                repeatMode = ValueAnimator.REVERSE
+                repeatCount = ValueAnimator.INFINITE
                 addUpdateListener {
                     mouthSweep = it.animatedValue as Float
                     invalidate()
                 }
-                repeatMode = ValueAnimator.REVERSE
-                repeatCount = ValueAnimator.INFINITE
             }
 
-    private var mouthStart = START_ANGLE + 180f
-    private var mouthSweep = END_ANGLE - 45f
+    private var mouthStart = END_ANGLE
+    private var mouthSweep = END_ANGLE - CORNER_OPEN_MOUTH
 
 
     fun startAnimation() {
@@ -102,11 +118,19 @@ class PacManView(context: Context, attributeSet: AttributeSet) : View(context, a
         radius = width / 2f * COEFFICIENT_MARGIN
         centerX = width / 2f
         centerY = height / 2f
-        radiusEye = radius / 6f
+        radiusEye = radius * EYE_COEFFICIENT
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        canvas.drawArc(bodyOvalPacMan, mouthStart, mouthSweep, true, paintContourBodyPacMan)
+        canvas.drawArc(
+            bodyOvalPacMan,
+            mouthStart,
+            mouthSweep.reverseNumber(),
+            true,
+            paintContourBodyPacMan
+        )
         canvas.drawArc(bodyOvalPacMan, mouthStart, mouthSweep, true, paintBodyPacMan)
         canvas.drawArc(
             bodyOvalPacMan,
@@ -115,7 +139,7 @@ class PacManView(context: Context, attributeSet: AttributeSet) : View(context, a
             true,
             paintBodyPacMan
         )
-        canvas.drawArc(eyeOvalPacMan, START_ANGLE, END_ANGLE * 2, true, paintEyePacMan)
+        canvas.drawArc(eyeOvalPacMan, START_ANGLE, END_ANGLE_EYE, true, paintEyePacMan)
     }
 
     private fun Float.reverseNumber(): Float {
