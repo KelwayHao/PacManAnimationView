@@ -10,11 +10,10 @@ import com.example.pacmananimationview.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
-    private lateinit var binding : ActivityMainBinding
+    private val binding by viewBinding<ActivityMainBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initView()
     }

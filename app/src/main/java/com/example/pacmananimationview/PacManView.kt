@@ -22,30 +22,30 @@ class PacManView(context: Context, attributeSet: AttributeSet) : View(context, a
     }
 
 
-    private val paintBodyPacMan = Paint(Paint.ANTI_ALIAS_FLAG)
-    var colorPacMan: Int = 0
+    private val pacManBodyPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    var pacManColor: Int = 0
         set(value) {
-            paintBodyPacMan.color = value
+            pacManBodyPaint.color = value
             field = value
             invalidate()
         }
 
-    private val paintContourBodyPacMan = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val pacManContourBodyPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         .apply {
             style = Paint.Style.STROKE
             strokeWidth = CONTOUR_THICKNESS
         }
-    var colorContourPacMan: Int = 0
+    var pacManContourColor: Int = 0
         set(value) {
-            paintContourBodyPacMan.color = value
+            pacManContourBodyPaint.color = value
             field = value
             invalidate()
         }
 
-    private val paintEyePacMan = Paint(Paint.ANTI_ALIAS_FLAG)
-    var colorEye: Int = 0
+    private val pacManEyePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    var eyeColor: Int = 0
         set(value) {
-            paintEyePacMan.color = value
+            pacManEyePaint.color = value
             field = value
             invalidate()
         }
@@ -53,11 +53,11 @@ class PacManView(context: Context, attributeSet: AttributeSet) : View(context, a
     init {
         context.theme.obtainStyledAttributes(attributeSet, R.styleable.PacManView, 0, 0)
             .apply {
-                colorPacMan =
+                pacManColor =
                     getColor(R.styleable.PacManView_pacmanColor, context.getColor(R.color.yellow))
-                colorEye =
+                eyeColor =
                     getColor(R.styleable.PacManView_pacmanEyeColor, context.getColor(R.color.black))
-                colorContourPacMan =
+                pacManContourColor =
                     getColor(
                         R.styleable.PacManView_pacmanContourColor,
                         context.getColor(R.color.black)
@@ -71,7 +71,7 @@ class PacManView(context: Context, attributeSet: AttributeSet) : View(context, a
     private var centerX = 0f
     private var centerY = 0f
 
-    private val bodyOvalPacMan: RectF by lazy {
+    private val pacManBodyOval: RectF by lazy {
         RectF(
             centerX - radius,
             centerY - radius,
@@ -80,7 +80,7 @@ class PacManView(context: Context, attributeSet: AttributeSet) : View(context, a
         )
     }
 
-    private val eyeOvalPacMan: RectF by lazy {
+    private val pacManEyeOval: RectF by lazy {
         RectF(
             centerX,
             centerY / 2f + radiusEye,
@@ -104,13 +104,16 @@ class PacManView(context: Context, attributeSet: AttributeSet) : View(context, a
     private var mouthStart = END_ANGLE
     private var mouthSweep = END_ANGLE - CORNER_OPEN_MOUTH
 
+    private val negativeMouthSweep get() = - mouthSweep
+
 
     fun startAnimation() {
         openMouth.start()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, widthMeasureSpec)
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        setMeasuredDimension(widthMeasureSpec, widthMeasureSpec)
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -123,26 +126,22 @@ class PacManView(context: Context, attributeSet: AttributeSet) : View(context, a
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawArc(bodyOvalPacMan, mouthStart, mouthSweep, true, paintContourBodyPacMan)
+        canvas.drawArc(pacManBodyOval, mouthStart, mouthSweep, true, pacManContourBodyPaint)
         canvas.drawArc(
-            bodyOvalPacMan,
+            pacManBodyOval,
             mouthStart,
-            mouthSweep.reverseNumber(),
+            negativeMouthSweep,
             true,
-            paintContourBodyPacMan
+            pacManContourBodyPaint
         )
-        canvas.drawArc(bodyOvalPacMan, mouthStart, mouthSweep, true, paintBodyPacMan)
+        canvas.drawArc(pacManBodyOval, mouthStart, mouthSweep, true, pacManBodyPaint)
         canvas.drawArc(
-            bodyOvalPacMan,
+            pacManBodyOval,
             mouthStart,
-            mouthSweep.reverseNumber(),
+            negativeMouthSweep,
             true,
-            paintBodyPacMan
+            pacManBodyPaint
         )
-        canvas.drawArc(eyeOvalPacMan, START_ANGLE, END_ANGLE_EYE, true, paintEyePacMan)
-    }
-
-    private fun Float.reverseNumber(): Float {
-        return -this
+        canvas.drawArc(pacManEyeOval, START_ANGLE, END_ANGLE_EYE, true, pacManEyePaint)
     }
 }
