@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PacManAnimationView</string>
+    <string name="play_pac_man">Play Pac Man</string>
 </resources>

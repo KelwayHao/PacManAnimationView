@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PacManView">
+        <attr name="pacmanColor" format="color"/>
+        <attr name="pacmanEyeColor" format="color"/>
+        <attr name="pacmanContourColor" format="color"/>
+    </declare-styleable>
+</resources>
