@@ -23,6 +23,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             buttonPlay.setOnClickListener {
                 pacMan.startAnimation()
             }
+            buttonGradient.setOnClickListener {
+                pacMan.gradientPacMan()
+            }
         }
     }
 }

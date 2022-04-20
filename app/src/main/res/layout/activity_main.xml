@@ -15,6 +15,17 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonGradient"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/buttonPlay"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/gradient_pac_man"/>
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonPlay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

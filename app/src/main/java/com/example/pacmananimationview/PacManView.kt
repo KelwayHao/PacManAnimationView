@@ -1,10 +1,9 @@
 package com.example.pacmananimationview
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 
@@ -21,6 +20,9 @@ class PacManView(context: Context, attributeSet: AttributeSet) : View(context, a
         private const val EYE_COEFFICIENT = 0.2f
     }
 
+
+    private val gradientStartColor = context.getColor(R.color.teal_200)
+    private val gradientEndColor = context.getColor(R.color.purple_700)
 
     private val pacManBodyPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     var pacManColor: Int = 0
@@ -109,6 +111,19 @@ class PacManView(context: Context, attributeSet: AttributeSet) : View(context, a
 
     fun startAnimation() {
         openMouth.start()
+    }
+
+    fun gradientPacMan() {
+        pacManBodyPaint.shader = LinearGradient(
+            0f,
+            0f,
+            width + 0f,
+             0f,
+            gradientStartColor,
+            gradientEndColor,
+            Shader.TileMode.CLAMP
+        )
+        invalidate()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
